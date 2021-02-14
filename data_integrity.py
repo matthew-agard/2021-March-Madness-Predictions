@@ -1,4 +1,4 @@
-coach_to_season_data_integrity = {
+coach_to_season_integrity_dict = {
      'BYU': 'Brigham Young',
      'Long Beach State': 'Cal State Long Beach',
      'Central Connecticut': 'Central Connecticut State',
@@ -38,3 +38,36 @@ coach_to_season_data_integrity = {
      'California': 'University of California',
      'VCU': 'Virginia Commonwealth'
 }
+
+season_to_tourney_integrity_dict = {
+     'Albany (NY)': 'Albany (N.Y.)',
+     'Little Rock': 'Arkansas-Little Rock',
+     'Cal Poly': 'Cal-Poly',
+     'University of California': 'California',
+     'Detroit Mercy': 'Detroit',
+     'Louisiana State': 'LSU',
+     'Cal State Long Beach': 'Long Beach State',
+     'Long Island University': 'Long Island',
+     'Louisiana': 'Louisiana-Lafayette',
+     'Loyola (IL)': 'Loyola (Ill.)',
+     'Loyola (MD)': 'Loyola (Md.)',
+     'Miami (FL)': 'Miami (Fla.)',
+     'Miami (OH)': 'Miami (Ohio)',
+     'Middle Tennessee': 'Middle Tennessee State',
+     'Murray State': 'Murray St.',
+     'Pennsylvania': 'Penn',
+     "St. John's (NY)": "St. John's",
+     "Saint Joseph's": "St. Joseph's",
+     'Saint Louis': 'St. Louis',
+     "Saint Mary's (CA)": "St. Mary's (Cal.)",
+     "Saint Peter's": "St. Peter's",
+     'Texas Christian': 'TCU',
+     'UC-Davis': 'UC Davis',
+     'UC-Irvine': 'UC Irvine',
+     'UC-Santa Barbara': 'UC Santa Barbara',
+     'North Carolina-Asheville': 'UNC Asheville',
+     'North Carolina-Greensboro': 'UNC Greensboro',
+     'North Carolina-Wilmington': 'UNC Wilmington',
+     'Nevada-Las Vegas': 'UNLV',
+     'Texas-El Paso': 'UTEP'
+ }
