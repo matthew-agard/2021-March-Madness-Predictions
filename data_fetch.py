@@ -3,6 +3,7 @@ from web_scraper_types import bs4_web_scrape, pandas_web_scrape
 
 def get_team_data(url, attrs, header=1):
     teams_df = pandas_web_scrape(url, attrs, header)
+    
     return teams_df[0]
 
 
@@ -32,4 +33,4 @@ def get_coach_data(url):
 
             coaches_df.loc[i] = [coach_team.text, mm_apps.text, sw16_apps.text, f4_apps.text, champ_wins.text]
 
-    return coaches_df
+    return coaches_df.drop_duplicates(subset='Coach_Team', keep='last')

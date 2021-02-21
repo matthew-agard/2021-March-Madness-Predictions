@@ -2,7 +2,21 @@ import pandas as pd
 import numpy as np
 
 
-def teams_to_faves_underdogs(mm_df, season_df):
+def totals_to_game_average(all_season_df, season_basic_df):
+    for i in range(1, len(all_season_df.columns)):
+        all_season_df.iloc[:, i] = all_season_df.iloc[:, i].astype(float)
+        
+    for col in season_basic_df.columns:
+        if (col not in ['School', 'G', 'SOS']) and ('%' not in col):
+            all_season_df[col + "/Game"] = np.round(all_season_df[col] / all_season_df['G'], 1)
+            all_season_df.drop(col, axis=1, inplace=True)
+            
+    all_season_df.drop('G', axis=1, inplace=True)
+
+    return all_season_df
+
+
+def create_faves_underdogs(mm_df, season_df):
     faves, underdogs = [], []
 
     for index, data in mm_df.iterrows():
@@ -31,3 +45,7 @@ def teams_to_faves_underdogs(mm_df, season_df):
     }
 
     return faves_unds
+
+ 
+def create_target_variable(mm_df):
+    return (mm_df['Score_Underdog'] > mm_df['Score_Favorite']).astype(int)
