@@ -32,8 +32,7 @@ def clean_coach_stats(coach_df):
 
 def reclean_all_season_stats(all_season_df, season_basic_df):
     all_season_df['School'].replace(season_to_tourney_integrity_dict, inplace=True)
-
-    all_season_df = totals_to_game_average(all_season_df, season_basic_df)
+    totals_to_game_average(all_season_df, season_basic_df)
 
     return all_season_df
 
@@ -55,3 +54,13 @@ def clean_tourney_data(mm_df, season_df):
     mm_df.drop(mm_df_drop, axis=1, inplace=True)
 
     return mm_df
+    
+
+def feature_null_counts(df):
+    nulls = df.isnull().sum().sort_values(ascending=False)
+    return nulls[nulls > 0]
+
+
+def get_null_rows(null_fills, df):
+    rows = df[df[null_fills].isnull().any(axis=1)]
+    return rows[['Year'] + null_fills]
