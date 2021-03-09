@@ -86,4 +86,9 @@ def scale_features(df):
 
  
 def create_target_variable(mm_df):
-    return (mm_df['Score_Underdog'] > mm_df['Score_Favorite']).astype(int)
+    target = (mm_df['Score_Underdog'] > mm_df['Score_Favorite']).astype(int)
+    
+    score_cols = [col for col in mm_df.columns if ('Score' in col)]
+    mm_df.drop(score_cols, axis=1, inplace=True)
+
+    return target

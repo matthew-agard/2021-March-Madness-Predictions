@@ -1,8 +1,12 @@
 import pandas as pd
-from web_scraper_types import bs4_web_scrape, pandas_web_scrape
+import re
+from web_scraper_types import bs4_web_scrape, pandas_web_scrape, bracket_web_scrape
 
 def get_team_data(url, attrs, header=1):
-    teams_df = pandas_web_scrape(url, attrs, header)
+    try:
+        teams_df = pandas_web_scrape(url, attrs, header)
+    except ValueError:
+        teams_df = [pd.DataFrame]
     
     return teams_df[0]
 
@@ -34,3 +38,22 @@ def get_coach_data(url):
             coaches_df.loc[i] = [coach_team.text, mm_apps.text, sw16_apps.text, f4_apps.text, champ_wins.text]
 
     return coaches_df.drop_duplicates(subset='Coach_Team', keep='last')
+
+
+def get_current_bracket(url, year):
+    raw_html = bracket_web_scrape(url, attrs={"id": "bracket"})
+    current_bracket = pd.DataFrame(columns=['Seed', 'Team', 'Seed.1', 'Team.1'])
+
+    for i, game in enumerate(raw_html):
+        game_string = game.find('dt')
+        
+        teams = [name.text for name in game_string.find_all('a')]
+        
+        seeds = re.findall(r'\d+', game_string.text) 
+        seeds = list(map(int, seeds))
+        
+        current_bracket.loc[i] = [seeds[0], teams[0], seeds[1], teams[1]]
+
+    current_bracket['Year'] = [year] * len(current_bracket)
+
+    return current_bracket

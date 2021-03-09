@@ -1,10 +1,13 @@
 import pandas as pd
 import numpy as np
+from datetime import datetime
 from data_integrity import coach_to_season_integrity_dict, season_to_tourney_integrity_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
 
+current_year = datetime.now().year
 
-def clean_basic_stats(df):
+
+def clean_basic_stats(year, df):
     useless_feats = ['Rk', 'MP'] + [col for col in df.columns 
                                     if ('Unnamed' in col) or ('W.' in col) or ('L.' in col)]
     lin_dep_feats = ['W', 'L', 'SRS', 'FGA', '3PA', 'FTA']
@@ -13,7 +16,8 @@ def clean_basic_stats(df):
     df.drop(feat_drops, axis=1, inplace=True)
     df = df[(df['School'] != 'School') & (df['G'] != 'Overall')]
 
-    ncaa_df = df[df['School'].str.contains('NCAA')]
+    # ADDRESS LATER FOR create_dataset([2021])
+    ncaa_df = df[df['School'].str.contains('NCAA')] if (year != current_year) else df
 
     return ncaa_df
 
@@ -37,9 +41,10 @@ def reclean_all_season_stats(all_season_df, season_basic_df):
     return all_season_df
 
 
-def clean_tourney_data(mm_df, season_df):
-    for col in ['Round', 'Team', 'Team.1']:
-        mm_df[col] = mm_df[col].apply(lambda name: name[:-(len(name) // 2)].strip())
+def clean_tourney_data(year, mm_df, season_df):
+    if year != current_year:
+        for col in ['Round', 'Team', 'Team.1']:
+            mm_df[col] = mm_df[col].apply(lambda name: name[:-(len(name) // 2)].strip())
 
     faves_unds = create_faves_underdogs(mm_df, season_df)
     mm_df_struct = ['Seed', 'Team', 'Score']
@@ -47,10 +52,11 @@ def clean_tourney_data(mm_df, season_df):
     for key in faves_unds.keys():    
         for j in range(len(mm_df_struct)):
             mm_df[mm_df_struct[j] + "_" + key] = faves_unds[key][:, j]
+
+    if year != current_year:
+        mm_df['Underdog_Upset'] = create_target_variable(mm_df)
             
-    mm_df['Underdog_Upset'] = create_target_variable(mm_df)
-            
-    mm_df_drop = mm_df_struct + [col for col in mm_df.columns if ('.1' in col) or ('Score' in col)]
+    mm_df_drop = ['Seed', 'Team'] + [col for col in mm_df.columns if ('.1' in col)]
     mm_df.drop(mm_df_drop, axis=1, inplace=True)
 
     return mm_df

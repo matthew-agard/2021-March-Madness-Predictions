@@ -18,3 +18,13 @@ def pandas_web_scrape(url, attrs, header):
     arr = pd.read_html(url, attrs=attrs, header=header)
 
     return arr
+
+
+def bracket_web_scrape(url, attrs):
+    url = url
+    page = requests.get(url)
+    soup = BeautifulSoup(page.text, "html.parser")
+    bracket = soup.find("div", attrs=attrs)
+
+    games = bracket.find_all("dl")
+    return games
