@@ -1,9 +1,10 @@
 import pandas as pd
-from datetime import datetime
 from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
 from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
+from feature_engineering import team_points_differentials, rounds_to_numeric, matchups_to_underdog_relative, scale_features
 
+from datetime import datetime
 current_year = datetime.now().year
 
 
@@ -52,8 +53,7 @@ def tournament_games(year, all_stats, basic_stats):
                                     attrs={'class': 'search-results'}, header=0)
     else:
         mm_games_df = get_current_bracket(url="http://www.espn.com/mens-college-basketball/tournament/bracket/"
-                                              "_/id/201922/2019-ncaa-tournament", 
-                                          year=year)
+                                              "_/id/201922/2019-ncaa-tournament")
     
     # Clean & merge regular season data to tournament games
     if not mm_games_df.empty:
@@ -84,3 +84,12 @@ def create_dataset(years):
         all_mm_data_df = pd.concat([all_mm_data_df, year_mm_data_df], ignore_index=True)
 
     return all_mm_data_df
+
+
+def feature_pipeline(df):
+    team_points_differentials(df)
+    rounds_to_numeric(df)
+    matchups_to_underdog_relative(df)
+    finalized_df = scale_features(df)
+
+    return finalized_df

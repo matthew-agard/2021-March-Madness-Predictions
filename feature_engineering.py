@@ -19,24 +19,27 @@ def create_faves_underdogs(mm_df, season_df):
     faves, underdogs = [], []
 
     for index, data in mm_df.iterrows():
+        team_arr = [data['Seed'], data['Team'], data['Score']]
+        team1_arr = [data['Seed.1'], data['Team.1'], data['Score.1']]
+
         if data['Seed.1'] == data['Seed']:
             team_win_pct = float(season_df[season_df['School'] == data['Team']]['W-L%'])
             team1_win_pct = float(season_df[season_df['School'] == data['Team.1']]['W-L%'])
             
             if team_win_pct > team1_win_pct:
-                underdogs.append([data['Seed.1'], data['Team.1'], data['Score.1']])
-                faves.append([data['Seed'], data['Team'], data['Score']])
+                underdogs.append(team1_arr)
+                faves.append(team_arr)
             else:
-                underdogs.append([data['Seed'], data['Team'], data['Score']])
-                faves.append([data['Seed.1'], data['Team.1'], data['Score.1']])
+                underdogs.append(team_arr)
+                faves.append(team1_arr)
             
         elif data['Seed.1'] > data['Seed']:
-            underdogs.append([data['Seed.1'], data['Team.1'], data['Score.1']])
-            faves.append([data['Seed'], data['Team'], data['Score']])
+            underdogs.append(team1_arr)
+            faves.append(team_arr)
 
         else:
-            underdogs.append([data['Seed'], data['Team'], data['Score']])
-            faves.append([data['Seed.1'], data['Team.1'], data['Score.1']])
+            underdogs.append(team_arr)
+            faves.append(team1_arr)
 
     faves_unds = {
     'Favorite': np.array(faves),
@@ -77,12 +80,32 @@ def matchups_to_underdog_relative(df):
 
 def scale_features(df):
     scaler = StandardScaler()
-    rescale = scaler.fit_transform(df.drop('Underdog_Upset', axis=1))
 
-    df_scaled = pd.DataFrame(rescale, index=df.index,
-                            columns=[col for col in df.columns if col != 'Underdog_Upset'])
+    try:
+        rescale = scaler.fit_transform(df.drop('Underdog_Upset', axis=1))
+        df_scaled = pd.DataFrame(rescale, index=df.index, 
+                                columns=[col for col in df.columns if col != 'Underdog_Upset'])
+        full_df = pd.concat([df_scaled, df['Underdog_Upset']], axis=1)
+    except KeyError:
+        rescale = scaler.fit_transform(df)
+        full_df = pd.DataFrame(rescale, index=df.index, columns=df.columns)
     
-    return pd.concat([df_scaled, df['Underdog_Upset']], axis=1)
+    return full_df
+
+
+def create_next_bracket_round(prev_round):
+    matchups = prev_round[['Team', 'Team.1']]
+    winners = []
+
+    for index, data in prev_round.iterrows():
+        winner_seed = data['Seed'] if (data['Underdog_Upset'] == 0) else data['Seed.1']
+        winner_team = matchups.iloc[index, data['Underdog_Upset']]
+
+        winners.append(tuple((winner_seed, winner_team)))
+
+    winners = np.array(winners).reshape((len(winners) // 2), 4)
+
+    return winners
 
  
 def create_target_variable(mm_df):

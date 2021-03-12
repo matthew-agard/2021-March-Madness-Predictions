@@ -23,10 +23,10 @@ def merge_clean_coaches(stats_rankings_df, coaches_df):
 
 
 def merge_clean_tourney_games(mm_df, all_season_df):
-    all_data_df = pd.merge(mm_df, all_season_df, 
-                            left_on='Team_Favorite', right_on='School').drop('School', axis=1)
+    favorites_data_df = pd.merge(mm_df, all_season_df, 
+                                left_on='Team_Favorite', right_on='School').drop('School', axis=1)
 
-    all_data_df = pd.merge(all_data_df, all_season_df, suffixes=("_Favorite", "_Underdog"),
+    all_data_df = pd.merge(favorites_data_df, all_season_df, suffixes=("_Favorite", "_Underdog"),
                             left_on='Team_Underdog', right_on='School').drop('School', axis=1)
 
     return all_data_df

@@ -6,7 +6,7 @@ def get_team_data(url, attrs, header=1):
     try:
         teams_df = pandas_web_scrape(url, attrs, header)
     except ValueError:
-        teams_df = [pd.DataFrame]
+        teams_df = [pd.DataFrame()]
     
     return teams_df[0]
 
@@ -40,7 +40,7 @@ def get_coach_data(url):
     return coaches_df.drop_duplicates(subset='Coach_Team', keep='last')
 
 
-def get_current_bracket(url, year):
+def get_current_bracket(url):
     raw_html = bracket_web_scrape(url, attrs={"id": "bracket"})
     current_bracket = pd.DataFrame(columns=['Seed', 'Team', 'Seed.1', 'Team.1'])
 
@@ -53,7 +53,5 @@ def get_current_bracket(url, year):
         seeds = list(map(int, seeds))
         
         current_bracket.loc[i] = [seeds[0], teams[0], seeds[1], teams[1]]
-
-    current_bracket['Year'] = [year] * len(current_bracket)
 
     return current_bracket

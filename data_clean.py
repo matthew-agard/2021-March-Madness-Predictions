@@ -1,9 +1,8 @@
 import pandas as pd
 import numpy as np
-from datetime import datetime
 from data_integrity import coach_to_season_integrity_dict, season_to_tourney_integrity_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
-
+from datetime import datetime
 current_year = datetime.now().year
 
 

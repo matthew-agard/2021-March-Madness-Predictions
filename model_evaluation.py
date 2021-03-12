@@ -20,15 +20,14 @@ def evaluate_cv_models(cv_models, X, y):
                                         cv=cross_vals, scoring=scoring, refit='AUC', random_state=42)
         
         model_cv.fit(X, y)
-        
         cv_models[model].append(model_cv)
         
-        model_performance.loc[model] = [
-            np.round(model_cv.cv_results_['mean_test_Accuracy'].mean(), 3),
-            np.round(model_cv.cv_results_['std_test_Accuracy'].mean(), 3),
-            np.round(model_cv.cv_results_['mean_test_AUC'].mean(), 3),
-            np.round(model_cv.cv_results_['std_test_AUC'].mean(), 3),
-        ]
+        model_performance.loc[model] = np.round([
+            model_cv.cv_results_['mean_test_Accuracy'].mean(),
+            model_cv.cv_results_['std_test_Accuracy'].mean(),
+            model_cv.cv_results_['mean_test_AUC'].mean(),
+            model_cv.cv_results_['std_test_AUC'].mean(),
+        ], 3)
 
     return model_performance
 
@@ -45,8 +44,8 @@ def test_model_thresholds(truths, probs, threshs):
         
         acc = accuracy_score(truths, preds)
         auc = roc_auc_score(truths, preds)
-        pct_upsets = sum(preds) / len(preds)    
+        pct_upsets = np.mean(preds)
         
-        performances.loc[thresh] = [np.round(acc, 3), np.round(auc, 3), np.round(pct_upsets, 3)]
+        performances.loc[thresh] = np.round([acc, auc, pct_upsets], 3)
         
-    return performances
+    return performances.drop_duplicates(subset=['Accuracy', 'AUC'], keep='last')
