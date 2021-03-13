@@ -40,6 +40,14 @@ def coach_performance(year, stats_rankings):
     return merge_clean_coaches(stats_rankings, clean_coaches_df)
 
 
+def all_team_season_data(year):
+    clean_season_basic_df, team_season_stats_df = regular_season_stats(year)
+    team_stats_rankings_df = team_rankings(year, team_season_stats_df)
+    all_season_stats_df = coach_performance(year, team_stats_rankings_df)
+
+    return all_season_stats_df, clean_season_basic_df
+
+
 def tournament_games(year, all_stats, basic_stats):
     # Reclean all team names & season stats (pre-tourney merge)
     clean_all_season_stats_df = reclean_all_season_stats(all_stats, basic_stats)
@@ -65,20 +73,11 @@ def tournament_games(year, all_stats, basic_stats):
     return mm_data_df
 
 
-def create_dataset(years):
+def dataset_pipeline(years):
     all_mm_data_df = pd.DataFrame()
 
     for year in years:    
-        clean_season_basic_df, team_season_stats_df = regular_season_stats(year)
-
-        team_stats_rankings_df = team_rankings(year, team_season_stats_df)
-
-        all_season_stats_df = coach_performance(year, team_stats_rankings_df)
-        
-        # if year != current_year:
-        #     year_mm_data_df = tournament_games(year, all_season_stats_df, clean_season_basic_df)
-        # else:
-        #     year_mm_data_df = all_season_stats_df
+        all_season_stats_df, clean_season_basic_df = all_team_season_data(year)
         year_mm_data_df = tournament_games(year, all_season_stats_df, clean_season_basic_df)
 
         all_mm_data_df = pd.concat([all_mm_data_df, year_mm_data_df], ignore_index=True)
@@ -87,8 +86,12 @@ def create_dataset(years):
 
 
 def feature_pipeline(df):
+    try:
+        rounds_to_numeric(df)
+    except KeyError:
+        pass
+
     team_points_differentials(df)
-    rounds_to_numeric(df)
     matchups_to_underdog_relative(df)
     finalized_df = scale_features(df)
 

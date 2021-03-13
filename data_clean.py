@@ -3,7 +3,8 @@ import numpy as np
 from data_integrity import coach_to_season_integrity_dict, season_to_tourney_integrity_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
 from datetime import datetime
-current_year = datetime.now().year
+# current_year = datetime.now().year
+current_year = 2019
 
 
 def clean_basic_stats(year, df):
@@ -50,12 +51,16 @@ def clean_tourney_data(year, mm_df, season_df):
 
     for key in faves_unds.keys():    
         for j in range(len(mm_df_struct)):
-            mm_df[mm_df_struct[j] + "_" + key] = faves_unds[key][:, j]
-
-    if year != current_year:
+            try:
+                mm_df[mm_df_struct[j] + "_" + key] = faves_unds[key][:, j]
+            except IndexError:
+                continue
+    try:
         mm_df['Underdog_Upset'] = create_target_variable(mm_df)
+    except KeyError:
+        pass
             
-    mm_df_drop = ['Seed', 'Team'] + [col for col in mm_df.columns if ('.1' in col)]
+    mm_df_drop = ['Seed', 'Team', 'Seed.1', 'Team.1']
     mm_df.drop(mm_df_drop, axis=1, inplace=True)
 
     return mm_df

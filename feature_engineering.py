@@ -19,8 +19,12 @@ def create_faves_underdogs(mm_df, season_df):
     faves, underdogs = [], []
 
     for index, data in mm_df.iterrows():
-        team_arr = [data['Seed'], data['Team'], data['Score']]
-        team1_arr = [data['Seed.1'], data['Team.1'], data['Score.1']]
+        try:
+            team_arr = [data['Seed'], data['Team'], data['Score']]
+            team1_arr = [data['Seed.1'], data['Team.1'], data['Score.1']]
+        except KeyError:
+            team_arr = [data['Seed'], data['Team']]
+            team1_arr = [data['Seed.1'], data['Team.1']]
 
         if data['Seed.1'] == data['Seed']:
             team_win_pct = float(season_df[season_df['School'] == data['Team']]['W-L%'])
@@ -93,7 +97,7 @@ def scale_features(df):
     return full_df
 
 
-def create_next_bracket_round(prev_round):
+def create_bracket_round(prev_round):
     matchups = prev_round[['Team', 'Team.1']]
     winners = []
 
@@ -104,8 +108,14 @@ def create_next_bracket_round(prev_round):
         winners.append(tuple((winner_seed, winner_team)))
 
     winners = np.array(winners).reshape((len(winners) // 2), 4)
+    winners_df = pd.DataFrame({
+        'Seed': winners[:, 0],
+        'Team': winners[:, 1],
+        'Seed.1': winners[:, 2],
+        'Team.1': winners[:, 3],
+    })
 
-    return winners
+    return winners_df
 
  
 def create_target_variable(mm_df):
