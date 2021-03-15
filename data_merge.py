@@ -1,9 +1,11 @@
 import pandas as pd
 import numpy as np
 
+
 def merge_clean_team_stats(basic_df, adv_df):
     season_team_stats_df = pd.merge(basic_df, adv_df, on='School')
-    season_team_stats_df['School'] = season_team_stats_df['School'].apply(lambda school: school[:-5])
+    if season_team_stats_df['School'].str.contains('NCAA').any():
+        season_team_stats_df['School'] = season_team_stats_df['School'].apply(lambda school: school[:-5])
     
     return season_team_stats_df
 

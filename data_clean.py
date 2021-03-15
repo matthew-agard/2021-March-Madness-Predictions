@@ -1,22 +1,18 @@
 import pandas as pd
 import numpy as np
-from data_integrity import coach_to_season_integrity_dict, season_to_tourney_integrity_dict
+from data_integrity import coach_to_season_dict, hist_season_to_tourney_dict, curr_season_to_tourney_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
 from datetime import datetime
-# current_year = datetime.now().year
-current_year = 2019
+current_year = datetime.now().year
 
 
 def clean_basic_stats(year, df):
     useless_feats = ['Rk', 'MP'] + [col for col in df.columns 
                                     if ('Unnamed' in col) or ('W.' in col) or ('L.' in col)]
-    lin_dep_feats = ['W', 'L', 'SRS', 'FGA', '3PA', 'FTA']
-    feat_drops = useless_feats + lin_dep_feats
-    
-    df.drop(feat_drops, axis=1, inplace=True)
-    df = df[(df['School'] != 'School') & (df['G'] != 'Overall')]
+    lin_dep_feats = ['W', 'L', 'SRS', 'FGA', '3PA', 'FTA']    
+    df.drop(useless_feats + lin_dep_feats, axis=1, inplace=True)
 
-    # ADDRESS LATER FOR create_dataset([2021])
+    df = df[(df['School'] != 'School') & (df['G'] != 'Overall')]
     ncaa_df = df[df['School'].str.contains('NCAA')] if (year != current_year) else df
 
     return ncaa_df
@@ -27,15 +23,19 @@ def clean_adv_stats(df):
 
 
 def clean_coach_stats(coach_df):
-    coach_df['Coach_Team'].replace(coach_to_season_integrity_dict, inplace=True)
+    coach_df['Coach_Team'].replace(coach_to_season_dict, inplace=True)
 
     coach_df.iloc[:, 1:] = coach_df.iloc[:, 1:].replace('', '0')
 
     return coach_df
 
 
-def reclean_all_season_stats(all_season_df, season_basic_df):
-    all_season_df['School'].replace(season_to_tourney_integrity_dict, inplace=True)
+def reclean_all_season_stats(year, all_season_df, season_basic_df):
+    if year != current_year:
+        all_season_df['School'].replace(hist_season_to_tourney_dict, inplace=True)
+    else:
+        all_season_df['School'].replace(curr_season_to_tourney_dict, inplace=True)
+
     totals_to_game_average(all_season_df, season_basic_df)
 
     return all_season_df

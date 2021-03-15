@@ -1,4 +1,4 @@
-coach_to_season_integrity_dict = {
+coach_to_season_dict = {
      'BYU': 'Brigham Young',
      'Long Beach State': 'Cal State Long Beach',
      'Central Connecticut': 'Central Connecticut State',
@@ -36,10 +36,10 @@ coach_to_season_integrity_dict = {
      'UTSA': 'Texas-San Antonio',
      'UCSB': 'UC-Santa Barbara',
      'California': 'University of California',
-     'VCU': 'Virginia Commonwealth'
+     'VCU': 'Virginia Commonwealth',
 }
 
-season_to_tourney_integrity_dict = {
+hist_season_to_tourney_dict = {
      'Albany (NY)': 'Albany (N.Y.)',
      'Little Rock': 'Arkansas-Little Rock',
      'Cal Poly': 'Cal-Poly',
@@ -69,5 +69,17 @@ season_to_tourney_integrity_dict = {
      'North Carolina-Greensboro': 'UNC Greensboro',
      'North Carolina-Wilmington': 'UNC Wilmington',
      'Nevada-Las Vegas': 'UNLV',
-     'Texas-El Paso': 'UTEP'
- }
+     'Texas-El Paso': 'UTEP',
+}
+
+curr_season_to_tourney_dict = {
+     'Brigham Young': 'BYU',
+     'Louisiana State': 'LSU',
+     'Loyola (IL)': 'Loyola Chicago',
+     'Norfolk State': 'Norfolk St',
+     'Connecticut': 'UConn',
+     'UC-Santa Barbara': 'UC Santa Barbara',
+     'North Carolina-Greensboro': 'UNC Greensboro',
+     'Southern California': 'USC',
+     'Virginia Commonwealth': 'VCU',
+}

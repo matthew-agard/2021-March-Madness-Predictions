@@ -1,6 +1,8 @@
 import pandas as pd
+import numpy as np
 import re
 from web_scraper_types import bs4_web_scrape, pandas_web_scrape, bracket_web_scrape
+
 
 def get_team_data(url, attrs, header=1):
     try:
@@ -46,12 +48,17 @@ def get_current_bracket(url):
 
     for i, game in enumerate(raw_html):
         game_string = game.find('dt')
-        
-        teams = [name.text for name in game_string.find_all('a')]
-        
+
+        teams = [name['title'] for name in game_string.find_all('a')]
+
         seeds = re.findall(r'\d+', game_string.text) 
         seeds = list(map(int, seeds))
-        
-        current_bracket.loc[i] = [seeds[0], teams[0], seeds[1], teams[1]]
 
+        try:
+            current_bracket.loc[i] = [seeds[0], teams[0], seeds[1], teams[1]]
+        except IndexError:
+            if len(teams) > 0:
+                current_bracket.loc[i] = [seeds[0], teams[0], np.nan, np.nan]
+                
+    current_bracket.index = range(len(current_bracket))
     return current_bracket
