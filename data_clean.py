@@ -1,19 +1,20 @@
 import pandas as pd
 import numpy as np
+from datetime import datetime
 from data_integrity import coach_to_season_dict, hist_season_to_tourney_dict, curr_season_to_tourney_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
-from datetime import datetime
+
 current_year = datetime.now().year
 
 
-def clean_basic_stats(year, df):
+def clean_basic_stats(df):
     useless_feats = ['Rk', 'MP'] + [col for col in df.columns 
                                     if ('Unnamed' in col) or ('W.' in col) or ('L.' in col)]
     lin_dep_feats = ['W', 'L', 'SRS', 'FGA', '3PA', 'FTA']    
     df.drop(useless_feats + lin_dep_feats, axis=1, inplace=True)
 
     df = df[(df['School'] != 'School') & (df['G'] != 'Overall')]
-    ncaa_df = df[df['School'].str.contains('NCAA')] if (year != current_year) else df
+    ncaa_df = df[df['School'].str.contains('NCAA')]
 
     return ncaa_df
 
@@ -74,3 +75,34 @@ def feature_null_counts(df):
 def get_null_rows(null_fills, df):
     rows = df[df[null_fills].isnull().any(axis=1)]
     return rows[['Year'] + null_fills]
+
+
+def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
+    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']]
+    curr_X = pd.concat([school_matchups_df, curr_X], axis=1)
+    curr_X.rename(columns = {
+        'Seed_Favorite': 'Seed',
+        'Team_Favorite': 'Team',
+        'Seed_Underdog': 'Seed.1',
+        'Team_Underdog': 'Team.1',
+    }, inplace=True)
+
+    curr_X.drop_duplicates(subset=['Team', 'Team.1'], inplace=True)
+    curr_X.index = range(len(curr_X))
+    
+    school_matchups_df.drop_duplicates(subset=['Team_Favorite', 'Team_Underdog'], inplace=True)
+    school_matchups_df.index = range(len(school_matchups_df))
+
+    return curr_X, school_matchups_df
+
+
+def fill_playin_teams(all_curr_matchups):
+    for index, data in all_curr_matchups[0].iterrows():
+        winner_seed = data['Seed'] if (data['Underdog_Upset'] == 0) else data['Seed.1']
+        winner_team = all_curr_matchups[0].iloc[index, data['Underdog_Upset']]
+
+        all_curr_matchups[1]['Seed.1'].fillna(winner_seed, inplace=True, limit=1)
+        all_curr_matchups[1]['Team.1'].fillna(winner_team, inplace=True, limit=1)
+
+    all_curr_matchups[0][['Seed', 'Seed.1']] = all_curr_matchups[0][['Seed', 'Seed.1']].astype(int)
+    all_curr_matchups[1][['Seed', 'Seed.1']] = all_curr_matchups[1][['Seed', 'Seed.1']].astype(int)

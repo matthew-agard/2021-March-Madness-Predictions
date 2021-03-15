@@ -1,17 +1,16 @@
 import pandas as pd
 from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
-from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data
+from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
-from feature_engineering import team_points_differentials, rounds_to_numeric, matchups_to_underdog_relative, scale_features
-from datetime import datetime
-current_year = datetime.now().year
+from feature_engineering import team_points_differentials, rounds_to_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round
+from model_evaluation import probs_to_preds
 
 
 def regular_season_stats(year):
     # Fetch & clean basic regular season stats
     season_basic_df = get_team_data(url=f"https://www.sports-reference.com/cbb/seasons/{year}-school-stats.html",
                                     attrs={'id': 'basic_school_stats'})
-    clean_season_basic_df = clean_basic_stats(year, season_basic_df)
+    clean_season_basic_df = clean_basic_stats(season_basic_df)
     
     # Fetch & clean advanced regular season stats
     season_adv_df = get_team_data(url=f"https://www.sports-reference.com/cbb/seasons/{year}-advanced-school-stats.html", 
@@ -47,9 +46,9 @@ def all_team_season_data(year):
     return all_season_stats_df, clean_season_basic_df
 
 
-def tournament_games(year, all_stats, basic_stats):
+def hist_tournament_games(year, all_stats, basic_stats):
     # Reclean all team names & season stats (pre-tourney merge)
-    clean_all_season_stats_df = reclean_all_season_stats(all_stats, basic_stats)
+    clean_all_season_stats_df = reclean_all_season_stats(year, all_stats, basic_stats)
     
     # Fetch tournament game data
     mm_games_df = get_team_data(url=("https://apps.washingtonpost.com/sports/search/?pri_school_id=&pri_conference=&pri_coach"
@@ -73,7 +72,7 @@ def dataset_pipeline(years):
 
     for year in years:    
         all_season_stats_df, clean_season_basic_df = all_team_season_data(year)
-        year_mm_data_df = tournament_games(year, all_season_stats_df, clean_season_basic_df)
+        year_mm_data_df = hist_tournament_games(year, all_season_stats_df, clean_season_basic_df)
 
         all_mm_data_df = pd.concat([all_mm_data_df, year_mm_data_df], ignore_index=True)
 
@@ -91,3 +90,61 @@ def feature_pipeline(df):
     finalized_df = scale_features(df)
 
     return finalized_df
+
+
+def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, null_drops):
+    # Generate non-engineered round
+    if curr_round not in [0, 1]:
+        generated_round = create_bracket_round(all_curr_matchups[curr_round-1])
+    else:
+        generated_round = all_curr_matchups[curr_round]
+
+    # Convert round matchups to favorite-underdog format
+    cleaned_generated_round = clean_tourney_data(year, generated_round, clean_curr_season_data)
+
+    # Merge all team season data to teams in matchups
+    all_round_data = merge_clean_tourney_games(cleaned_generated_round, clean_curr_season_data)
+
+    # Prepare df for prediction via feature pipeline preprocessing
+    schools = ['Team_Favorite', 'Team_Underdog']
+    school_matchups_df = all_round_data[schools]
+
+    all_round_data.drop(schools + null_drops, axis=1, inplace=True)
+
+    school_matchups_df['Round'] = [curr_round] * len(school_matchups_df)
+
+    curr_X = feature_pipeline(all_round_data)
+
+    return all_round_data, curr_X, school_matchups_df
+
+
+def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
+    all_curr_season_data, curr_season_basic_df = all_team_season_data(year)
+    clean_curr_season_data = reclean_all_season_stats(year, all_curr_season_data, curr_season_basic_df)
+
+    all_curr_matchups = [play_in, first_round]
+    all_curr_rounds = [play_in, first_round]
+
+    for curr_round in range(7):    
+        all_round_data, curr_X, school_matchups_df = round_pipeline(year, curr_round, all_curr_matchups, 
+                                                                    clean_curr_season_data, null_drops)
+        # Make & store predictions
+        curr_y_probs = model.predict_proba(curr_X)[:, 1]
+        school_matchups_df['Underdog_Upset'] = probs_to_preds(curr_y_probs, thresh)
+        
+        # Clean current predictions for use in next round
+        curr_X, school_matchups_df = clean_curr_round_data(all_round_data, curr_X, school_matchups_df)
+        
+        # Store necessary data        
+        if curr_round in [0, 1]:
+            all_curr_matchups[curr_round] = curr_X
+            all_curr_rounds[curr_round] = school_matchups_df
+        else:
+            all_curr_matchups.append(curr_X)
+            all_curr_rounds.append(school_matchups_df)
+
+        # Fill first round nulls with play-in winners (when necesssary)
+        if curr_round == 0:
+            fill_playin_teams(all_curr_matchups)
+
+    return all_curr_rounds, all_curr_matchups
