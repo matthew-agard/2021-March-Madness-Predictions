@@ -77,16 +77,20 @@ def get_null_rows(null_fills, df):
     return rows[['Year'] + null_fills]
 
 
-def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
-    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']]
-    curr_X = pd.concat([school_matchups_df, curr_X], axis=1)
-    curr_X.rename(columns = {
+def clean_round_cols(df):
+    df.rename(columns = {
         'Seed_Favorite': 'Seed',
         'Team_Favorite': 'Team',
         'Seed_Underdog': 'Seed.1',
         'Team_Underdog': 'Team.1',
     }, inplace=True)
 
+
+def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
+    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']]
+    curr_X = pd.concat([school_matchups_df, curr_X], axis=1)
+
+    clean_round_cols(curr_X)
     curr_X.drop_duplicates(subset=['Team', 'Team.1'], inplace=True)
     curr_X.index = range(len(curr_X))
     
@@ -106,3 +110,16 @@ def fill_playin_teams(all_curr_matchups):
 
     all_curr_matchups[0][['Seed', 'Seed.1']] = all_curr_matchups[0][['Seed', 'Seed.1']].astype(int)
     all_curr_matchups[1][['Seed', 'Seed.1']] = all_curr_matchups[1][['Seed', 'Seed.1']].astype(int)
+
+
+def clean_bracket(all_curr_matchups, all_curr_rounds):
+    all_matchups = pd.concat(all_curr_matchups, ignore_index=True)
+    bracket_preds = pd.concat(all_curr_rounds, ignore_index=True)
+
+    bracket_preds = pd.concat([all_matchups[['Seed', 'Seed.1']], bracket_preds], axis=1)
+    bracket_preds.rename(columns = {
+        'Seed': 'Seed_Favorite',
+        'Seed.1': 'Seed_Underdog',
+    }, inplace=True)
+
+    return bracket_preds

@@ -1,6 +1,6 @@
 import pandas as pd
 from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
-from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams
+from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
 from feature_engineering import team_points_differentials, rounds_to_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round
 from model_evaluation import probs_to_preds
@@ -125,7 +125,8 @@ def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
     all_curr_matchups = [play_in, first_round]
     all_curr_rounds = [play_in, first_round]
 
-    for curr_round in range(7):    
+    for curr_round in range(7):
+        # Fetch all data needed for current round    
         all_round_data, curr_X, school_matchups_df = round_pipeline(year, curr_round, all_curr_matchups, 
                                                                     clean_curr_season_data, null_drops)
         # Make & store predictions
@@ -135,7 +136,7 @@ def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
         # Clean current predictions for use in next round
         curr_X, school_matchups_df = clean_curr_round_data(all_round_data, curr_X, school_matchups_df)
         
-        # Store necessary data        
+        # Store round data        
         if curr_round in [0, 1]:
             all_curr_matchups[curr_round] = curr_X
             all_curr_rounds[curr_round] = school_matchups_df
@@ -147,4 +148,6 @@ def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
         if curr_round == 0:
             fill_playin_teams(all_curr_matchups)
 
-    return all_curr_rounds, all_curr_matchups
+    bracket_preds = clean_bracket(all_curr_matchups, all_curr_rounds)
+
+    return bracket_preds
