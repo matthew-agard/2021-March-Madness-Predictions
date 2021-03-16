@@ -117,6 +117,16 @@ def create_bracket_round(prev_round):
 
     return winners_df
 
+
+def create_bracket_winners(bracket):
+    winners = []
+
+    for index, data in bracket.iterrows():
+        team_winner = data['Team_Underdog'] if (data['Underdog_Upset'] == 1) else data['Team_Favorite']
+        winners.append(team_winner)
+        
+    bracket['Winner'] = winners
+
  
 def create_target_variable(mm_df):
     target = (mm_df['Score_Underdog'] > mm_df['Score_Favorite']).astype(int)

@@ -87,7 +87,7 @@ def clean_round_cols(df):
 
 
 def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
-    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']]
+    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']].astype(float).astype(int)
     curr_X = pd.concat([school_matchups_df, curr_X], axis=1)
 
     clean_round_cols(curr_X)
