@@ -118,7 +118,7 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
     return all_round_data, curr_X, school_matchups_df
 
 
-def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
+def bracket_pipeline(year, play_in, first_round, model, null_drops):
     all_curr_season_data, curr_season_basic_df = all_team_season_data(year)
     clean_curr_season_data = reclean_all_season_stats(year, all_curr_season_data, curr_season_basic_df)
 
@@ -130,8 +130,7 @@ def bracket_pipeline(year, play_in, first_round, model, thresh, null_drops):
         all_round_data, curr_X, school_matchups_df = round_pipeline(year, curr_round, all_curr_matchups, 
                                                                     clean_curr_season_data, null_drops)
         # Make & store predictions
-        curr_y_probs = model.predict_proba(curr_X)[:, 1]
-        school_matchups_df['Underdog_Upset'] = probs_to_preds(curr_y_probs, thresh)
+        school_matchups_df['Underdog_Upset'] = model.predict(curr_X)
         
         # Clean current predictions for use in next round
         curr_X, school_matchups_df = clean_curr_round_data(all_round_data, curr_X, school_matchups_df)

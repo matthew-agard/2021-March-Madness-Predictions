@@ -11,8 +11,6 @@ def totals_to_game_average(all_season_df, season_basic_df):
         if (col not in ['School', 'G', 'SOS']) and ('%' not in col):
             all_season_df[col + "/Game"] = np.round(all_season_df[col] / all_season_df['G'], 1)
             all_season_df.drop(col, axis=1, inplace=True)
-            
-    all_season_df.drop('G', axis=1, inplace=True)
 
 
 def create_faves_underdogs(mm_df, season_df):
