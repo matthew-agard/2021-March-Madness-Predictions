@@ -2,8 +2,7 @@ import pandas as pd
 from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
 from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
-from feature_engineering import team_points_differentials, rounds_to_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
-from model_evaluation import probs_to_preds
+from feature_engineering import team_points_differentials, bidirectional_rounds_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
 
 
 def regular_season_stats(year):
@@ -81,7 +80,7 @@ def dataset_pipeline(years):
 
 def feature_pipeline(df):
     try:
-        rounds_to_numeric(df)
+        bidirectional_rounds_numeric(df)
     except KeyError:
         pass
 

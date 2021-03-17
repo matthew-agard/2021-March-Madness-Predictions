@@ -57,17 +57,29 @@ def team_points_differentials(df):
         df.drop(['Tm./Game_' + team, 'Opp./Game_' + team], axis=1, inplace=True)
 
 
-def rounds_to_numeric(df):
-    df['Round'].replace({
-        'Play-In': 0,
-        'First Round': 1,
-        'Second Round': 2,
-        'Sweet 16': 3,
-        'Elite Eight': 4,
-        'Final Four': 5,
-        'National Championship': 6
-    }, 
-    inplace=True)
+def bidirectional_rounds_numeric(df):
+    if df['Round'].dtype == object:
+        df['Round'].replace({
+            'Play-In': 0,
+            'First Round': 1,
+            'Second Round': 2,
+            'Sweet 16': 3,
+            'Elite Eight': 4,
+            'Final Four': 5,
+            'National Championship': 6,
+        }, 
+        inplace=True)
+    else:
+        df['Round'].replace({
+            0:'Play-In',
+            1:'First Round',
+            2:'Second Round',
+            3:'Sweet 16',
+            4:'Elite Eight',
+            5:'Final Four',
+            6:'National Championship',
+        }, 
+        inplace=True)
 
 
 def matchups_to_underdog_relative(df):

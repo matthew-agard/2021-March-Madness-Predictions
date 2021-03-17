@@ -1,7 +1,7 @@
 import pandas as pd
 import numpy as np
 from sklearn.model_selection import GridSearchCV, RandomizedSearchCV
-from sklearn.metrics import accuracy_score, roc_auc_score
+from sklearn.metrics import accuracy_score, roc_auc_score, classification_report
 
 
 def evaluate_cv_models(cv_models, X, y):
@@ -49,3 +49,7 @@ def test_model_thresholds(truths, probs, threshs):
         performances.loc[thresh] = np.round([acc, auc, pct_upsets], 3)
         
     return performances.drop_duplicates(subset=['Accuracy', 'AUC'], keep='last')
+
+
+def get_classification_report(truths, preds):
+    return classification_report(truths, preds)

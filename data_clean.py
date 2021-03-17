@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from data_integrity import coach_to_season_dict, hist_season_to_tourney_dict, curr_season_to_tourney_dict
-from feature_engineering import totals_to_game_average, create_faves_underdogs, create_target_variable
+from feature_engineering import totals_to_game_average, create_faves_underdogs, bidirectional_rounds_numeric, create_target_variable
 
 current_year = datetime.now().year
 
@@ -121,5 +121,6 @@ def clean_bracket(all_curr_matchups, all_curr_rounds):
         'Seed': 'Seed_Favorite',
         'Seed.1': 'Seed_Underdog',
     }, inplace=True)
+    bidirectional_rounds_numeric(bracket_preds)
 
     return bracket_preds
