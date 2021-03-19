@@ -57,7 +57,7 @@ def team_points_differentials(df):
         df.drop(['Tm./Game_' + team, 'Opp./Game_' + team], axis=1, inplace=True)
 
 
-def bidirectional_rounds_numeric(df):
+def bidirectional_rounds_str_numeric(df):
     if df['Round'].dtype == object:
         df['Round'].replace({
             'Play-In': 0,

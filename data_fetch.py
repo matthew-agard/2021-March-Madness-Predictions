@@ -20,6 +20,7 @@ def get_rankings_data(url):
     for i in range(len(raw_html)):
         if raw_html[i].find('a'):
             team = raw_html[i].find("a")
+            # CONSIDER 'AP Rank' FEATURE ON SPORTS REFERENCE
             rankings_df.loc[i] = [team.text, 1 if (len(rankings_df) < 25) else 0]
             
     return rankings_df
@@ -58,7 +59,7 @@ def get_current_bracket(url):
             current_bracket.loc[i] = [seeds[0], teams[0], seeds[1], teams[1]]
         except IndexError:
             if len(teams) > 0:
-                current_bracket.loc[i] = [seeds[0], teams[0], None, None]
+                current_bracket.loc[i] = [seeds[0], teams[0], 0, None]
                 
     current_bracket.index = range(len(current_bracket))
     return current_bracket

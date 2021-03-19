@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 from data_integrity import coach_to_season_dict, hist_season_to_tourney_dict, curr_season_to_tourney_dict
-from feature_engineering import totals_to_game_average, create_faves_underdogs, bidirectional_rounds_numeric, create_target_variable
+from feature_engineering import totals_to_game_average, create_faves_underdogs, bidirectional_rounds_str_numeric, create_target_variable
 
 current_year = datetime.now().year
 
@@ -87,9 +87,9 @@ def clean_round_cols(df):
 
 
 def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
-    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']].astype(float).astype(int)
+    curr_X[['Seed_Favorite', 'Seed_Underdog']] = all_round_data[['Seed_Favorite', 'Seed_Underdog']]
     curr_X = pd.concat([school_matchups_df, curr_X], axis=1)
-
+    
     clean_round_cols(curr_X)
     curr_X.drop_duplicates(subset=['Team', 'Team.1'], inplace=True)
     curr_X.index = range(len(curr_X))
@@ -101,15 +101,15 @@ def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
 
 
 def fill_playin_teams(all_curr_matchups):
-    for index, data in all_curr_matchups[0].iterrows():
+    first_round = all_curr_matchups[1]
+    playin_nulls = list(first_round[first_round.isnull().any(axis=1)].index)
+
+    for i, data in all_curr_matchups[0].iterrows():
         winner_seed = data['Seed'] if (data['Underdog_Upset'] == 0) else data['Seed.1']
-        winner_team = all_curr_matchups[0].iloc[index, data['Underdog_Upset']]
+        winner_team = data['Team'] if (data['Underdog_Upset'] == 0) else data['Team.1']
 
-        all_curr_matchups[1]['Seed.1'].fillna(winner_seed, inplace=True, limit=1)
-        all_curr_matchups[1]['Team.1'].fillna(winner_team, inplace=True, limit=1)
-
-    all_curr_matchups[0][['Seed', 'Seed.1']] = all_curr_matchups[0][['Seed', 'Seed.1']].astype(int)
-    all_curr_matchups[1][['Seed', 'Seed.1']] = all_curr_matchups[1][['Seed', 'Seed.1']].astype(int)
+        first_round.loc[playin_nulls[i], 'Seed.1'] = winner_seed
+        first_round.loc[playin_nulls[i], 'Team.1'] = winner_team
 
 
 def clean_bracket(all_curr_matchups, all_curr_rounds):
@@ -121,6 +121,6 @@ def clean_bracket(all_curr_matchups, all_curr_rounds):
         'Seed': 'Seed_Favorite',
         'Seed.1': 'Seed_Underdog',
     }, inplace=True)
-    bidirectional_rounds_numeric(bracket_preds)
+    bidirectional_rounds_str_numeric(bracket_preds)
 
     return bracket_preds

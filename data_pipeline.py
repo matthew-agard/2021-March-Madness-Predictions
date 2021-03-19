@@ -2,7 +2,7 @@ import pandas as pd
 from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
 from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
-from feature_engineering import team_points_differentials, bidirectional_rounds_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
+from feature_engineering import team_points_differentials, bidirectional_rounds_str_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
 
 
 def regular_season_stats(year):
@@ -80,7 +80,7 @@ def dataset_pipeline(years):
 
 def feature_pipeline(df):
     try:
-        bidirectional_rounds_numeric(df)
+        bidirectional_rounds_str_numeric(df)
     except KeyError:
         pass
 
@@ -98,6 +98,9 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
     else:
         generated_round = all_curr_matchups[curr_round]
 
+    # Ensure matchup seeds are integers for proper favorite-underdog identification
+    generated_round[['Seed', 'Seed.1']] = generated_round[['Seed', 'Seed.1']].astype(int)
+
     # Convert round matchups to favorite-underdog format
     cleaned_generated_round = clean_tourney_data(year, generated_round, clean_curr_season_data)
 
@@ -105,13 +108,11 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
     all_round_data = merge_clean_tourney_games(cleaned_generated_round, clean_curr_season_data)
 
     # Prepare df for prediction via feature pipeline preprocessing
-    schools = ['Team_Favorite', 'Team_Underdog']
-    school_matchups_df = all_round_data[schools]
-
-    all_round_data.drop(schools + null_drops, axis=1, inplace=True)
-
+    teams = ['Team_Favorite', 'Team_Underdog']
+    school_matchups_df = all_round_data[teams]
     school_matchups_df['Round'] = [curr_round] * len(school_matchups_df)
 
+    all_round_data.drop(teams + null_drops, axis=1, inplace=True)
     curr_X = feature_pipeline(all_round_data)
 
     return all_round_data, curr_X, school_matchups_df
