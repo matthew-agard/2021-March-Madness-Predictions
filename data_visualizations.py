@@ -25,7 +25,7 @@ def get_yearly_base_rates(df):
     
     Returns
     -------
-    DataFrame
+    yearly_base_rates : DataFrame
         DataFrame of favorites' wins base rate (per year)
     """
 
@@ -52,7 +52,7 @@ def get_seed_pairs(df):
     
     Returns
     -------
-    DataFrame
+    seed_pairs : DataFrame
         DataFrame of team seeds and their game outcomes
     """
     sorted_pairs = []
