@@ -1,4 +1,19 @@
-import pandas as pd
+"""Model Selection Helper Functions
+
+This script is used as a module in the March_Madness_Predictions Jupyter notebooks.
+
+The following functions are present:
+    * init_knn
+    * init_naive_bayes
+    * init_logreg
+    * init_svm
+    * init_rf
+    * get_cv_models
+
+Requires a minimum of the 'numpy' and 'sklearn' libraries being installed 
+in your environment to run.
+"""
+
 import numpy as np
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.naive_bayes import GaussianNB
@@ -8,6 +23,13 @@ from sklearn.ensemble import RandomForestClassifier
 
 
 def init_knn():
+    """Initialize KNN model
+
+    Returns
+    -------
+    list
+        Collection of model, its parameters, and what CV search to perform
+    """
     knn = KNeighborsClassifier()
     knn_params = {
         'n_neighbors': np.arange(1, 101),
@@ -17,6 +39,18 @@ def init_knn():
 
 
 def init_naive_bayes(y):
+    """Initialize Naive Bayes model
+
+    Parameters
+    -------
+    y : list
+        Historical tournament game target variables
+
+    Returns
+    -------
+    list
+        Collection of model, its parameters, and what CV search to perform
+    """
     gnb = GaussianNB()
     gnb_params = {
         'priors': [None, list(y.value_counts(normalize=True))],
@@ -26,6 +60,13 @@ def init_naive_bayes(y):
 
 
 def init_logreg():
+    """Initialize Logistic Regression model
+
+    Returns
+    -------
+    list
+        Collection of model, its parameters, and what CV search to perform
+    """
     lr = LogisticRegression()
     lr_params = {
         'C': [10**i for i in range(-5, 6)],
@@ -37,6 +78,13 @@ def init_logreg():
 
 
 def init_svm():
+    """Initialize SVM model
+
+    Returns
+    -------
+    list
+        Collection of model, its parameters, and what CV search to perform
+    """
     svm = LinearSVC()
     svm_params = {
         'dual': [False],
@@ -48,6 +96,13 @@ def init_svm():
 
 
 def init_rf():
+    """Initialize SVM model
+
+    Returns
+    -------
+    list
+        Collection of model, its parameters, and what CV search to perform
+    """
     rf = RandomForestClassifier()
     rf_params = {
         'n_estimators': np.arange(50, 250),
@@ -61,18 +116,24 @@ def init_rf():
 
 
 def get_cv_models(y):
-    knn = init_knn()
-    gnb = init_naive_bayes(y)
-    lr = init_logreg()
-    svm = init_svm()
-    rf = init_rf()
+    """Fetch all models
 
+    Parameters
+    -------
+    y : list
+        Historical tournament game target variables
+
+    Returns
+    -------
+    dict
+        Dictionary of all models upon which to perform CV search
+    """
     cv_models = {
-    'KNN': knn,
-    'Naive Bayes': gnb,
-    'LogReg': lr,
-    'SVM': svm,
-    'Random Forest': rf,
+        'KNN': init_knn(),
+        'Naive Bayes': init_naive_bayes(y),
+        'LogReg': init_logreg(),
+        'SVM': init_svm(),
+        'Random Forest': init_rf(),
     }
 
     return cv_models

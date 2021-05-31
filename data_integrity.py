@@ -1,3 +1,10 @@
+"""Data Integrity Dictionaries
+
+This script stores team name replacement dictionaries used in the data_clean script.
+
+No functions are present, and no libraries or modules are required in your environment.
+"""
+
 coach_to_season_dict = {
      'BYU': 'Brigham Young',
      'Long Beach State': 'Cal State Long Beach',
