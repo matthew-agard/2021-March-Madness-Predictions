@@ -27,7 +27,7 @@ def get_team_data(url, attrs, header=1):
         URL path to data
     attrs : dict
         Characteristics to idenitfy HTML element of interest
-    header : int
+    header : int, optional
         Row in raw data to use for column headers
 
     Returns
