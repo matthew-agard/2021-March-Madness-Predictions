@@ -1,6 +1,6 @@
 import pandas as pd
-from data_fetch import get_team_data, get_rankings_data, get_coach_data, get_current_bracket
-from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, reclean_all_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
+from data_fetch import get_team_data, get_rankings_data, get_coach_data
+from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, clean_merged_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
 from feature_engineering import team_points_differentials, bidirectional_rounds_str_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
 
@@ -47,7 +47,7 @@ def all_team_season_data(year):
 
 def hist_tournament_games(year, all_stats, basic_stats):
     # Reclean all team names & season stats (pre-tourney merge)
-    clean_all_season_stats_df = reclean_all_season_stats(year, all_stats, basic_stats)
+    clean_all_season_stats_df = clean_merged_season_stats(year, all_stats, basic_stats)
     
     # Fetch tournament game data
     mm_games_df = get_team_data(url=("https://apps.washingtonpost.com/sports/search/?pri_school_id=&pri_conference=&pri_coach"
@@ -120,7 +120,7 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
 
 def bracket_pipeline(year, play_in, first_round, model, null_drops):
     all_curr_season_data, curr_season_basic_df = all_team_season_data(year)
-    clean_curr_season_data = reclean_all_season_stats(year, all_curr_season_data, curr_season_basic_df)
+    clean_curr_season_data = clean_merged_season_stats(year, all_curr_season_data, curr_season_basic_df)
 
     all_curr_matchups = [play_in, first_round]
     all_curr_rounds = [play_in, first_round]

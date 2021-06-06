@@ -1,12 +1,14 @@
 """Data Fetch Helper Functions
 
 This script is used as a helper module in the data_pipeline script; 
-also used sparingly as a module in the March_Madness_Predictions Jupyter notebooks.
+also used as a module in the March_Madness_Predictions Jupyter notebooks.
 
 The following functions are present:
     * get_team_data
     * get_rankings_data
     * get_coach_data
+    * get_null_rows
+    * get_feature_null_counts
     * get_current_bracket
 
 Requires a minimum of the 'pandas' and 're' libraries, as well as the 
@@ -102,6 +104,42 @@ def get_coach_data(url):
             coaches_df.loc[i] = [coach_team.text, mm_apps.text, sw16_apps.text, f4_apps.text, champ_wins.text]
 
     return coaches_df.drop_duplicates(subset='Coach_Team', keep='last')
+
+
+def get_null_rows(null_fills, df):
+    """Fetch rows with any nulls; used for imputing new values
+
+    Parameters
+    ----------
+    null_fills : list
+        Collection of features where nulls reside
+    df : DataFrame
+        Fully merged dataset
+
+    Returns
+    -------
+    DataFrame
+        Cross-section of df; contains the rows where nulls reside for features in null_fills list
+    """
+    rows = df[df[null_fills].isnull().any(axis=1)]
+    return rows[['Year'] + null_fills]
+
+
+def get_feature_null_counts(df):
+    """Count volume of nulls for each feature containing any nulls
+
+    Parameters
+    ----------
+    df : DataFrame
+        Fully merged dataset
+
+    Returns
+    -------
+    DataFrame
+        Structure containing all features with nulls, sorted in descending order by their number of nulls
+    """
+    nulls = df.isnull().sum().sort_values(ascending=False)
+    return nulls[nulls > 0]
 
 
 def get_current_bracket(url):
