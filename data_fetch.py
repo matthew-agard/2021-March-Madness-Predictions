@@ -12,7 +12,7 @@ The following functions are present:
     * get_current_bracket
 
 Requires a minimum of the 'pandas' and 're' libraries, as well as the 
-'web_scraper_types' helper module, being installed in your environment to run.
+'web_scraper_types' helper module, being present in your environment to run.
 """
 
 import pandas as pd

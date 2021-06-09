@@ -6,7 +6,7 @@ The following functions are present:
     * get_seed_pairs
     * format_plot
 
-Requires a minimum of the 'pandas', 'numpy', and 'matplotlib' libraries being installed 
+Requires a minimum of the 'pandas', 'numpy', and 'matplotlib' libraries being present 
 in your environment to run.
 """
 

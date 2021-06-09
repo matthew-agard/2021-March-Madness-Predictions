@@ -8,7 +8,7 @@ The following functions are present:
     * test_model_thresholds
     * get_classification_report
 
-Requires a minimum of the 'pandas', 'numpy', and 'sklearn' libraries being installed 
+Requires a minimum of the 'pandas', 'numpy', and 'sklearn' libraries being present 
 in your environment to run.
 """
 

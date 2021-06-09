@@ -25,6 +25,6 @@ The purpose of this personal project is to perform supervised classification on 
 -Store notebooks in directories by year (easier to show progress year by year)<br>
 -Refactor various API components (feature engineering, data cleaning, pipelines)<br>
 -Rewrite web scraper for fetching historical March Madness data<br>
--Apply fit_transform() to train set only, not entire dataset (in feature pipeline)<br>
--Experiment with neural networks (for next year)<br>
+-Apply fit_transform() to train set only, else transform() (in feature pipeline)<br>
+-Experiment with neural networks and gradient-boosted trees (develop for March Madness 2022 and beyond)<br>
 -Flesh out README "Setup" section

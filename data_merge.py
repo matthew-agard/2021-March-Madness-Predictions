@@ -7,7 +7,7 @@ The following functions are present:
     * merge_clean_coaches
     * merge_clean_tourney_games
 
-Requires a minimum of the 'pandas' library being installed in your environment to run.
+Requires a minimum of the 'pandas' library being present in your environment to run.
 """
 
 import pandas as pd

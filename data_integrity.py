@@ -1,6 +1,6 @@
 """Data Integrity Dictionaries
 
-This script stores team name replacement dictionaries used in the data_clean script.
+This script stores replacement dictionaries used in the data_clean and feature_engineering scripts.
 
 No functions are present, and no libraries or modules are required in your environment.
 """
@@ -89,4 +89,24 @@ curr_season_to_tourney_dict = {
      'North Carolina-Greensboro': 'UNC Greensboro',
      'Southern California': 'USC',
      'Virginia Commonwealth': 'VCU',
+}
+
+rounds_str_to_numeric = {
+     'Play-In': 0,
+     'First Round': 1,
+     'Second Round': 2,
+     'Sweet 16': 3,
+     'Elite Eight': 4,
+     'Final Four': 5,
+     'National Championship': 6,
+}
+
+rounds_numeric_to_str = {
+     0:'Play-In',
+     1:'First Round',
+     2:'Second Round',
+     3:'Sweet 16',
+     4:'Elite Eight',
+     5:'Final Four',
+     6:'National Championship',
 }

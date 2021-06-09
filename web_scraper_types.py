@@ -6,7 +6,7 @@ The following functions are present:
     * bs4_web_scrape
     * bracket_web_scrape
 
-Requires a minimum of the 'pandas', 'requests', and 'BeautifulSoup' libraries being installed 
+Requires a minimum of the 'pandas', 'requests', and 'BeautifulSoup' libraries being present 
 in your environment to run.
 """
 

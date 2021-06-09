@@ -10,7 +10,7 @@ The following functions are present:
     * init_rf
     * get_cv_models
 
-Requires a minimum of the 'numpy' and 'sklearn' libraries being installed 
+Requires a minimum of the 'numpy' and 'sklearn' libraries being present 
 in your environment to run.
 """
 

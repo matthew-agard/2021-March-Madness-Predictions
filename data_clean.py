@@ -13,12 +13,11 @@ The following functions are present:
     * fill_playin_teams
     * clean_bracket
 
-Requires a minimum of the 'pandas', 'numpy', and 'datetime' libraries, as well as the 
-'data_integrity' and 'feature_engineering' helper modules, being installed in your environment to run.
+Requires a minimum of the 'pandas' and 'datetime' libraries, as well as the 'data_integrity' 
+and 'feature_engineering' helper modules, being present in your environment to run.
 """
 
 import pandas as pd
-import numpy as np
 from datetime import datetime
 from data_integrity import coach_to_season_dict, hist_season_to_tourney_dict, curr_season_to_tourney_dict
 from feature_engineering import totals_to_game_average, create_faves_underdogs, bidirectional_rounds_str_numeric, create_target_variable
