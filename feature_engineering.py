@@ -13,7 +13,7 @@ The following functions are present:
     * create_bracket_winners
     * create_target_variable
 
-Requires a minimum of the 'pandas', 'numpy', and 'sklearm' libraries, as well as 
+Requires a minimum of the 'pandas', 'numpy', and 'sklearn' libraries, as well as 
 the 'data_integrity' helper module, being present in your environment to run.
 """
 
@@ -46,7 +46,7 @@ def totals_to_game_average(all_season_df, season_basic_df):
 
 
 def create_faves_underdogs(mm_df, season_df):
-    """Convert team matchup data into definitive favorites-underdogs
+    """Convert team listings into favorites-underdogs matchups
 
     Parameters
     ----------
@@ -107,7 +107,7 @@ def create_faves_underdogs(mm_df, season_df):
 
 
 def team_points_differentials(df):
-    """Convert team points/game features into point differential features
+    """Convert team points/game features into point differential feature
 
     Parameters
     ----------
@@ -122,7 +122,7 @@ def team_points_differentials(df):
 
 
 def bidirectional_rounds_str_numeric(df):
-    """Convert rounds to numbers for modeling, then back to str for EDA
+    """Convert rounds to integers for modeling, then back to strings for EDA
 
     Parameters
     ----------
@@ -135,7 +135,7 @@ def bidirectional_rounds_str_numeric(df):
 
 
 def matchups_to_underdog_relative(df):
-    """Convert favorite-underdog features to a single class of underdog relative features
+    """Convert favorite-underdog features to a single class of 'Underdog_Relative' features
 
     Parameters
     ----------
@@ -155,7 +155,6 @@ def matchups_to_underdog_relative(df):
 
 
 def scale_features(df):
-    # *****REVISIT THIS AFTER TODO IS COMPLETED*****
     """'Center the data' of all numerical features; levels playing field for feature importances
 
     Parameters

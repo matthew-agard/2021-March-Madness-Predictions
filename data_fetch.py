@@ -30,7 +30,7 @@ def get_team_data(url, attrs, header=1):
     attrs : dict
         Characteristics to idenitfy HTML element of interest
     header : int, optional
-        Row in raw data to use for column headers
+        Row in raw data to use for column headers (default=1)
 
     Returns
     -------
@@ -126,7 +126,7 @@ def get_null_rows(null_fills, df):
 
 
 def get_feature_null_counts(df):
-    """Count volume of nulls for each feature containing any nulls
+    """Count number of nulls for each feature containing any nulls
 
     Parameters
     ----------

@@ -29,7 +29,7 @@ def get_yearly_base_rates(df):
         DataFrame of favorites' wins base rate (per year)
     """
 
-    # Extract number of upsets, favorites' wins across all game outcomes (per year)
+    # Extract number of underdogs' and favorites' wins across all game outcomes (per year)
     yearly_outcomes = df.groupby(['Year', 'Underdog_Upset']).agg({'Round': 'count'})
     yearly_games = df.groupby('Year').agg({'Round': 'count'})
     yearly_outcomes = pd.merge(yearly_outcomes, yearly_games, left_index=True, right_index=True)

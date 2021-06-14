@@ -78,7 +78,7 @@ def init_logreg():
 
 
 def init_svm():
-    """Initialize SVM model
+    """Initialize Support Vector Machine model
 
     Returns
     -------
@@ -96,7 +96,7 @@ def init_svm():
 
 
 def init_rf():
-    """Initialize SVM model
+    """Initialize Random Forest model
 
     Returns
     -------
@@ -116,7 +116,7 @@ def init_rf():
 
 
 def get_cv_models(y):
-    """Fetch all models
+    """Get all models
 
     Parameters
     -------

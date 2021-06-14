@@ -38,7 +38,7 @@ def clean_basic_stats(df):
     ncaa_df : DataFrame
         All basic regular reason data for March Madness teams
     """
-    # Remove useless "feature" used in table formatting
+    # Remove useless "features" used in table formatting
     useless_feats = ['Rk', 'MP'] + [col for col in df.columns 
                                     if ('Unnamed' in col) or ('W.' in col) or ('L.' in col)]
     # Remove linearly dependent features
@@ -48,7 +48,7 @@ def clean_basic_stats(df):
     # Remove useless rows used in table formatting
     df = df[(df['School'] != 'School') & (df['G'] != 'Overall')]
 
-    # Filter out teams that didn't participate in March Madness
+    # Filter out teams that didn't participate in March Madness tournament
     ncaa_df = df[df['School'].str.contains('NCAA')]
 
     return ncaa_df
@@ -222,7 +222,7 @@ def clean_curr_round_data(all_round_data, curr_X, school_matchups_df):
 
 
 def fill_playin_teams(all_curr_matchups):
-    """Fill bracket nulls with play-in winners
+    """Fill first round bracket nulls with play-in winners
 
     Parameters
     ----------

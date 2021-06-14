@@ -39,7 +39,7 @@ def merge_clean_team_stats(basic_df, adv_df):
 
 
 def merge_clean_rankings(team_stats_df, rankings_df):
-    """Merge season rankings with season stats
+    """Merge season rankings to season stats
 
     Parameters
     ----------
@@ -73,8 +73,7 @@ def merge_clean_coaches(stats_rankings_df, coaches_df):
     Returns
     -------
     all_season_stats_df : DataFrame
-        Newly-merged DataFrame of a teams' regular season stats, 
-        regular season ranking, and coach performance
+        Newly-merged DataFrame of a teams' regular season stats, regular season ranking, and coach performance
     """
     # Merge on the school name
     all_season_stats_df = pd.merge(stats_rankings_df, coaches_df,

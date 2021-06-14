@@ -19,12 +19,13 @@ The purpose of this personal project is to perform supervised classification on 
 ...also in the works...
 
 # TODO
--Write documentation for all API files<br>
 -Write documentation for notebook decision-making & visualizations<br>
 -Structure API into nested directory<br>
 -Store notebooks in directories by year (easier to show progress year by year)<br>
 -Refactor various API components (feature engineering, data cleaning, pipelines)<br>
 -Rewrite web scraper for fetching historical March Madness data<br>
--Apply fit_transform() to train set only, else transform() (in feature pipeline)<br>
+-Assess feasibility of feature additions: conference, conference W-L%<br>
+-Apply fit_transform() to training set only, else transform() (in feature pipeline)<br>
+-start_bracket_from_round() functionality; could be used to overwrite predictions and recreate bracket from there<br>
 -Experiment with neural networks and gradient-boosted trees (develop for March Madness 2022 and beyond)<br>
 -Flesh out README "Setup" section
