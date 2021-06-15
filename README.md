@@ -20,8 +20,6 @@ The purpose of this personal project is to perform supervised classification on 
 
 # TODO
 -Write documentation for notebook decision-making & visualizations<br>
--Structure API into nested directory<br>
--Store notebooks in directories by year (easier to show progress year by year)<br>
 -Refactor various API components (feature engineering, data cleaning, pipelines)<br>
 -Rewrite web scraper for fetching historical March Madness data<br>
 -Assess feasibility of feature additions: conference, conference W-L%<br>

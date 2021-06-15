@@ -18,10 +18,13 @@ Requires a minimum of the 'pandas' library, as well as the 'data_fetch', 'data_c
 """
 
 import pandas as pd
-from data_fetch import get_team_data, get_rankings_data, get_coach_data
 from data_clean import clean_basic_stats, clean_adv_stats, clean_coach_stats, clean_merged_season_stats, clean_tourney_data, clean_curr_round_data, fill_playin_teams, clean_bracket
 from data_merge import merge_clean_team_stats, merge_clean_rankings, merge_clean_coaches, merge_clean_tourney_games
 from feature_engineering import team_points_differentials, bidirectional_rounds_str_numeric, matchups_to_underdog_relative, scale_features, create_bracket_round, create_bracket_winners
+
+from sys import path
+path.append('../fetch')
+from data_fetch import get_team_data, get_rankings_data, get_coach_data
 
 
 def regular_season_stats(year):
