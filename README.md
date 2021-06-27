@@ -20,9 +20,10 @@ The purpose of this personal project is to perform supervised classification on 
 
 # TODO
 -Write documentation for notebook decision-making & visualizations<br>
--Refactor various API components (feature engineering, data cleaning, pipelines)<br>
 -Rewrite web scraper for fetching historical March Madness data<br>
--Assess feasibility of feature additions: conference, conference W-L%<br>
--start_bracket_from_round() functionality; could be used to overwrite predictions and recreate bracket from there<br>
+-Monte Carlo simulation for bracket_pipeline() using different X_train fits<br>
+-Consider 'AP Rank' feature on sportsreference for current year's Top 25 list<br>
+-Feature additions: conference, conference W-L%<br>
 -Experiment with neural networks and gradient-boosted trees (develop for March Madness 2022 and beyond)<br>
+-start_bracket_from_round() functionality; could be used to overwrite predictions and recreate bracket from there<br>
 -Flesh out README "Setup" section

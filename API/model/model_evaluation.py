@@ -26,9 +26,9 @@ def evaluate_cv_models(cv_models, X, y):
     cv_models : dict
         Collection of model, its parameters, and what CV search to perform
     X : DataFrame
-        Entire historical tournament training dataset
+        Historical tournament training dataset
     y : list
-        row in raw data to use for column headers
+        All target variable values
 
     Returns
     -------

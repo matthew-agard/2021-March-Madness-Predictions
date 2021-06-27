@@ -68,7 +68,6 @@ def get_rankings_data(url):
     for i, rank in enumerate(raw_html):
         if rank.find('a'):
             team = rank.find('a')
-            """CONSIDER 'AP Rank' FEATURE ON SPORTS REFERENCE"""
             # Identify Top 25 teams using ternary operator to produce binary output
             rankings_df.loc[i] = [team.text, 1 if (len(rankings_df) < 25) else 0]
             

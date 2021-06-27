@@ -60,7 +60,7 @@ def get_seed_pairs(df):
     # Collect seed pairs of all tournament matchups
     for index, data in df.iterrows():
         # Store pairs in sorted order to achieve continuity (i.e. 6-11 seed matchup same as 11-6 seed)
-        sorted_pair = tuple(sorted([data['Seed_Favorite'], data['Seed_Underdog']]))
+        sorted_pair = tuple(sorted([int(data['Seed_Favorite']), int(data['Seed_Underdog'])]))
         sorted_pairs.append(sorted_pair)
 
     # Return stored results in dataframe
