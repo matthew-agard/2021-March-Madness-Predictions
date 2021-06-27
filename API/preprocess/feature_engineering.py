@@ -154,32 +154,28 @@ def matchups_to_underdog_relative(df):
         df.drop([col + '_Underdog', col + '_Favorite'], axis=1, inplace=True)
 
 
-def scale_features(df):
+def scale_features(primary_df, fit_df):
     """'Center the data' of all numerical features; levels playing field for feature importances
 
     Parameters
     ----------
-    df : DataFrame
-        Fully merged and cleaned tournament data
+    primary_df : DataFrame
+        Dataset to engineer; always used to transform StandardScaler()
+    fit_df : DataFrame
+        Dataset used to fit StandardScaler()
 
     Returns
     -------
     full_df : DataFrame
         Fully merged and cleaned tournament data that has been scaled
     """
-    # import StandardScaler object
+    # Import and fit StandardScaler object
     scaler = StandardScaler()
+    scaler.fit(fit_df)
 
-    # Rescale data, then format it according to the structure of the original DataFrame
-    try:
-        rescale = scaler.fit_transform(df.drop('Underdog_Upset', axis=1))
-        df_scaled = pd.DataFrame(rescale, index=df.index, 
-                                columns=[col for col in df.columns if col != 'Underdog_Upset'])
-        full_df = pd.concat([df_scaled, df['Underdog_Upset']], axis=1)
-    # Catch key error when scaling data that doesn't contain a target variable
-    except KeyError:
-        rescale = scaler.fit_transform(df)
-        full_df = pd.DataFrame(rescale, index=df.index, columns=df.columns)
+    # Rescale data, then format it according to the structure of the primary DataFrame
+    rescale = scaler.transform(primary_df)
+    full_df = pd.DataFrame(rescale, index=primary_df.index, columns=primary_df.columns)
     
     return full_df
 

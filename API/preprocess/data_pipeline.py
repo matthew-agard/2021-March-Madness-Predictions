@@ -199,13 +199,15 @@ def dataset_pipeline(years):
     return all_data_df
 
 
-def feature_pipeline(df):
+def feature_pipeline(primary_df, fit_df):
     """Engineer features for complete dataset
 
     Parameters
     ----------
-    df : DataFrame
-        Complete dataset
+    primary_df : DataFrame
+        Dataset to engineer; always used to transform StandardScaler()
+    trans_df : DataFrame
+        Dataset used to fit StandardScaler()
 
     Returns
     -------
@@ -214,23 +216,23 @@ def feature_pipeline(df):
     """
     # Reclassify the 'Round' feature accordingly (if it's even present)
     try:
-        bidirectional_rounds_str_numeric(df)
+        bidirectional_rounds_str_numeric(primary_df)
     except KeyError:
         pass
 
     # Convert team points/game features into point differential features
-    team_points_differentials(df)
+    team_points_differentials(primary_df)
 
     # Convert favorite-underdog features to a single class of underdog relative feature
-    matchups_to_underdog_relative(df)
+    matchups_to_underdog_relative(primary_df)
 
     # 'Center the data' for all numerical features; improves models' signal processing abilities
-    full_feature_df = scale_features(df)
+    full_feature_df = scale_features(primary_df, fit_df)
 
     return full_feature_df
 
 
-def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, null_drops):
+def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, fit_df, null_drops):
     """Generate a round to be used for in the creation of an entire bracket
 
     Parameters
@@ -243,6 +245,8 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
         Tournament matchups used for model prediction; 1 round per index
     clean_curr_season_data : DataFrame
         Complete data for all regular season team and coach stats
+    fit_df : DataFrame
+        Dataset used to fit StandardScaler()
     null_drops : list
         Set of features to drop from whole dataset prior to model prediction
 
@@ -277,12 +281,12 @@ def round_pipeline(year, curr_round, all_curr_matchups, clean_curr_season_data, 
 
     # Prepare DataFrame for prediction via feature pipeline preprocessing
     all_round_data.drop(teams + null_drops, axis=1, inplace=True)
-    curr_X = feature_pipeline(all_round_data)
+    curr_X = feature_pipeline(all_round_data, fit_df)
 
     return all_round_data, curr_X, school_matchups_df
 
 
-def bracket_pipeline(year, play_in, first_round, model, null_drops):
+def bracket_pipeline(year, play_in, first_round, model, fit_df, null_drops):
     """Generate a bracket as a prediction of the current year's tournament
 
     Parameters
@@ -295,6 +299,8 @@ def bracket_pipeline(year, play_in, first_round, model, null_drops):
         Scraped matchups from the first round (non-generated)
     model : sklearn.base.BaseEstimator
         Model of choice for tournament matchup predictions
+    fit_df : DataFrame
+        Dataset used to fit StandardScaler()
     null_drops : list
         Set of features to drop from whole dataset prior to model prediction
 
@@ -314,7 +320,7 @@ def bracket_pipeline(year, play_in, first_round, model, null_drops):
     for curr_round in range(7):
         # Get all data needed for current generated/selected round    
         all_round_data, curr_X, school_matchups_df = round_pipeline(year, curr_round, all_curr_matchups, 
-                                                                    clean_curr_season_data, null_drops)
+                                                                    clean_curr_season_data, fit_df, null_drops)
         # Create predictions
         school_matchups_df['Underdog_Upset'] = model.predict(curr_X)
         

@@ -23,7 +23,6 @@ The purpose of this personal project is to perform supervised classification on 
 -Refactor various API components (feature engineering, data cleaning, pipelines)<br>
 -Rewrite web scraper for fetching historical March Madness data<br>
 -Assess feasibility of feature additions: conference, conference W-L%<br>
--Apply fit_transform() to training set only, else transform() (in feature pipeline)<br>
 -start_bracket_from_round() functionality; could be used to overwrite predictions and recreate bracket from there<br>
 -Experiment with neural networks and gradient-boosted trees (develop for March Madness 2022 and beyond)<br>
 -Flesh out README "Setup" section
