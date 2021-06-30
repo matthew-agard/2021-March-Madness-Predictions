@@ -26,4 +26,5 @@ The purpose of this personal project is to perform supervised classification on 
 -Feature additions: conference, conference W-L%<br>
 -Experiment with neural networks and gradient-boosted trees (develop for March Madness 2022 and beyond)<br>
 -start_bracket_from_round() functionality; could be used to overwrite predictions and recreate bracket from there<br>
+-Productionize model to the cloud (AWS, GCP, Azure)<br>
 -Flesh out README "Setup" section
